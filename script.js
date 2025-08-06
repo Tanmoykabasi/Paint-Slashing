@@ -1,33 +1,14 @@
-const canvas = document.getElementById('canvas');
+const canvas = document.getElementById('paintCanvas');
 const ctx = canvas.getContext('2d');
+const startMessage = document.getElementById('startMessage');
+let isDrawing = false;
+let lastX = 0;
+let lastY = 0;
+let currentColor;
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
-let painting = false;
-
-function startPosition(e) {
-    painting = true;
-    draw(e);
-}
-
-function endPosition() {
-    painting = false;
-    ctx.beginPath();
-}
-
-function draw(e) {
-    if (!painting) return;
-
-    ctx.lineWidth = 10;
-    ctx.lineCap = 'round';
-    ctx.strokeStyle = getRandomColor();
-
-    ctx.lineTo(e.clientX, e.clientY);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(e.clientX, e.clientY);
-}
+// Set canvas size to full viewport width and height minus some padding
+canvas.width = window.innerWidth - 20;
+canvas.height = window.innerHeight - 20;
 
 function getRandomColor() {
     const letters = '0123456789ABCDEF';
@@ -38,15 +19,57 @@ function getRandomColor() {
     return color;
 }
 
-canvas.addEventListener('mousedown', startPosition);
-canvas.addEventListener('mouseup', endPosition);
-canvas.addEventListener('mousemove', draw);
+canvas.addEventListener('mousedown', (e) => {
+    isDrawing = true;
+    lastX = e.offsetX;
+    lastY = e.offsetY;
+    currentColor = getRandomColor();
+    ctx.beginPath();
+    ctx.moveTo(lastX, lastY);
+    startMessage.style.display = 'none';
+});
 
-canvas.addEventListener('touchstart', startPosition);
-canvas.addEventListener('touchend', endPosition);
-canvas.addEventListener('touchmove', draw);
+canvas.addEventListener('mousemove', (e) => {
+    if (isDrawing) {
+        ctx.lineTo(e.offsetX, e.offsetY);
+        ctx.strokeStyle = currentColor;
+        ctx.lineWidth = 5;
+        ctx.stroke();
+        lastX = e.offsetX;
+        lastY = e.offsetY;
+    }
+});
 
-window.addEventListener('resize', () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+canvas.addEventListener('mouseup', () => {
+    isDrawing = false;
+});
+
+// For touch devices
+canvas.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    isDrawing = true;
+    const touch = e.touches[0];
+    lastX = touch.offsetX;
+    lastY = touch.offsetY;
+    currentColor = getRandomColor();
+    ctx.beginPath();
+    ctx.moveTo(lastX, lastY);
+    startMessage.style.display = 'none';
+});
+
+canvas.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    if (isDrawing) {
+        const touch = e.touches[0];
+        ctx.lineTo(touch.offsetX, touch.offsetY);
+        ctx.strokeStyle = currentColor;
+        ctx.lineWidth = 5;
+        ctx.stroke();
+        lastX = touch.offsetX;
+        lastY = touch.offsetY;
+    }
+});
+
+canvas.addEventListener('touchend', () => {
+    isDrawing = false;
 });
