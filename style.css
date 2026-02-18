@@ -1,0 +1,31 @@
+body {
+    display: flex;
+    justify - content: center;
+    align - items: center;
+    height: 100vh;
+    margin: 0;
+    background - color: #f0f0f5;
+}
+
+.container {
+    position: relative;
+}
+
+#paintCanvas {
+    border: 5px solid #333;
+    border - radius: 10px;
+    box - shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+#startMessage {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font - size: 24px;
+    color: #333;
+    font - family: Arial, sans - serif;
+    background - color: rgba(255, 255, 255, 0.8);
+    padding: 10px 20px;
+    border - radius: 5px;
+}
